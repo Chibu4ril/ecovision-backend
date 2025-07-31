@@ -3,7 +3,7 @@ from api.routes import router
 from fastapi.middleware.cors import CORSMiddleware
 
 
-app = FastAPI(title="FastAPI CSV Processor For EcoVision")
+app = FastAPI(title="CSV Processor For EcoVision")
 
 
 app.add_middleware(
