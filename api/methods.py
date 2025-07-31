@@ -6,28 +6,28 @@ from config.config import supabase
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-async def fetch_files_from_bucket(bucket_name: str) -> List[Dict[str, str]]:
+async def fetch_files_from_bucket(bucket_name: str, folder_path: str = "") -> List[Dict[str, str]]:
     try:
-        response = supabase.storage.from_(bucket_name).list()
+        response = supabase.storage.from_(bucket_name).list(folder_path)
         
         if response is None or (isinstance(response, dict) and "error" in response):
-            logger.error(f"Error fetching files from bucket '{bucket_name}': {response}")
+            logger.error(f"Error fetching files from bucket '{bucket_name}/{folder_path}': {response}")
             return []
         
         return [
             {
                 "name": file["name"],
-                "url": supabase.storage.from_(bucket_name).get_public_url(file["name"])
+                "url": supabase.storage.from_(bucket_name).get_public_url(f"{folder_path}/{file['name']}")
             }
             for file in response
             if file["name"] != ".emptyFolderPlaceholder"
         ]
     except Exception as e:
-        logger.error(f"Exception occurred while fetching files from bucket '{bucket_name}': {e}")
+        logger.error(f"Exception occurred while fetching files from bucket '{bucket_name}/{folder_path}': {e}")
         return []
 
 async def fetch_unprocessed_files() -> List[Dict[str, str]]:
-    return await fetch_files_from_bucket("uav-new-images/unprocessed")
+    return await fetch_files_from_bucket("uav-new-images", "unprocessed")
 
 async def fetch_training_sets() -> List[Dict[str, str]]:
     return await fetch_files_from_bucket("training_set")
