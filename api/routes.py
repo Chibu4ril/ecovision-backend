@@ -21,7 +21,7 @@ class FileDeleteRequest(BaseModel):
 async def get_uploaded_files():
     try:
         unprocessed = await fetch_unprocessed_files()
-        return {"files": unprocessed}
+        return {"unprocessed": unprocessed}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
