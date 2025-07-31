@@ -1,57 +1,61 @@
+import logging
+from typing import List, Dict, Optional
 from config.config import supabase
 
-async def fetch_uploaded_files():
-    response = supabase.storage.from_("uploads").list()
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-    if response is None or isinstance(response, dict) and "error" in response:
-        print("Error Occurred Here! Innocent", response)
+async def fetch_files_from_bucket(bucket_name: str) -> List[Dict[str, str]]:
+    try:
+        response = supabase.storage.from_(bucket_name).list()
+        
+        if response is None or (isinstance(response, dict) and "error" in response):
+            logger.error(f"Error fetching files from bucket '{bucket_name}': {response}")
+            return []
+        
+        return [
+            {
+                "name": file["name"],
+                "url": supabase.storage.from_(bucket_name).get_public_url(file["name"])
+            }
+            for file in response
+            if file["name"] != ".emptyFolderPlaceholder"
+        ]
+    except Exception as e:
+        logger.error(f"Exception occurred while fetching files from bucket '{bucket_name}': {e}")
         return []
 
-    return [
-        {
-            "name": file["name"],
-            "url": supabase.storage.from_("uploads").get_public_url(file["name"])
-        }
-        for file in response
-        if file["name"] != ".emptyFolderPlaceholder"
-    ]
+async def fetch_unprocessed_files() -> List[Dict[str, str]]:
+    return await fetch_files_from_bucket("uav-new-images/unprocessed")
 
-
-async def fetch_training_sets():
-    response = supabase.storage.from_("training_set").list()
-
-    if response is None or isinstance(response, dict) and "error" in response:
-        print("Error Occurred Here! Innocent", response)
-        return []
-
-    return [
-        {
-            "name": file["name"],
-            "url": supabase.storage.from_("training_set").get_public_url(file["name"])
-        }
-        for file in response
-        if file["name"] != ".emptyFolderPlaceholder"
-    ]
+async def fetch_training_sets() -> List[Dict[str, str]]:
+    return await fetch_files_from_bucket("training_set")
 
 
 
    
-async def delete_uploaded_files(fileUrl):
+async def delete_uploaded_files(file_url: str) -> Dict[str, str]:
     from urllib.parse import urlparse
-    parsed_url = urlparse(fileUrl)
-    file_path = parsed_url.path.lstrip("/")  
-
-    response = await supabase.storage.from_("uploads").remove([file_path])
-
-    print("Supabase delete response:", response)
-
-    # Log the full response for debugging
-    print("Supabase delete response:", response)
     
-    # Check if there was an error in the response
-    if response.get("error"):
-        return {"success": False, "message": f"Error deleting file: {response['error']}"}
-    
-    return {"success": True, "message": f"File '{file_path}' deleted successfully"}
+    try:
+        parsed_url = urlparse(file_url)
+        file_path = parsed_url.path.lstrip("/")  
+
+        response = await supabase.storage.from_("uploads").remove([file_path])
+
+        logger.info(f"Supabase delete response for '{file_path}': {response}")
+        
+        # Check if there was an error in the response
+        if response.get("error"):
+            logger.error(f"Error deleting file '{file_path}': {response['error']}")
+            return {"success": False, "message": f"Error deleting file: {response['error']}"}
+        
+        logger.info(f"File '{file_path}' deleted successfully")
+        return {"success": True, "message": f"File '{file_path}' deleted successfully"}
+        
+    except Exception as e:
+        logger.error(f"Exception occurred while deleting file '{file_url}': {e}")
+        return {"success": False, "message": f"Exception occurred: {str(e)}"}
     
 

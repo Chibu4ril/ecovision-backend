@@ -6,7 +6,7 @@ import json
 import sys
 import os
 
-from .methods import fetch_training_sets, fetch_uploaded_files, delete_uploaded_files
+from .methods import fetch_training_sets, fetch_unprocessed_files, delete_uploaded_files
 
 from fastapi.responses import JSONResponse
 
@@ -17,16 +17,11 @@ router = APIRouter()
 class FileDeleteRequest(BaseModel):
     fileUrl : str
 
-@router.get("/files")
+@router.get("/unprocessed_files")
 async def get_uploaded_files():
     try:
-        upload_files = await fetch_uploaded_files()
-        training_set_files = await fetch_training_sets()
-
-        # print(upload_files)
-
-        all_files = upload_files + training_set_files
-        return {"files": all_files}
+        unprocessed = await fetch_unprocessed_files()
+        return {"files": unprocessed}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
