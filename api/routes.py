@@ -25,6 +25,7 @@ async def get_uploaded_files():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.delete("/delete")
 async def match_the_file(request: FileDeleteRequest):
     try:
@@ -42,7 +43,7 @@ class PredictionRequest(BaseModel):
     selectedFileUrl: str
     
 
-@router.post("/runPrediction")
+@router.post("/runModels")
 async def run_prediction(request: PredictionRequest):
     try:
         selected_file = request.selectedFileUrl
