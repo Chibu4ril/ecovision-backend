@@ -9,6 +9,7 @@ from torchvision.models import ConvNeXt_Base_Weights
 from transformers import SegformerForSemanticSegmentation, SegformerImageProcessor, SegformerConfig
 from safetensors.torch import load_file
 from tqdm import tqdm
+import logging
 
 
 logging.basicConfig(filename="/tmp/script_output.log", level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
