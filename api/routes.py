@@ -65,12 +65,12 @@ async def run_prediction(request: PredictionRequest):
 
 
         # If the script runs successfully
-        if process.returncode == 0:
-            try:
-                output_json = json.loads(process.stdout.strip())  # Parse JSON safely
-                return JSONResponse(content=output_json)  # Return JSON response
-            except json.JSONDecodeError:
-                raise HTTPException(status_code=500, detail="Invalid JSON output from script")
+        # if process.returncode == 0:
+        #     try:
+        #         output_json = json.loads(process.stdout.strip())  # Parse JSON safely
+        #         return JSONResponse(content=output_json)  # Return JSON response
+        #     except json.JSONDecodeError:
+        #         raise HTTPException(status_code=500, detail="Invalid JSON output from script")
 
         # If the script fails, return an error response
         raise HTTPException(status_code=500, detail=f"Script execution failed: {process.stderr.strip()}")
