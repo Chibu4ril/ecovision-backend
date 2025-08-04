@@ -10,12 +10,46 @@ from transformers import SegformerForSemanticSegmentation, SegformerImageProcess
 from safetensors.torch import load_file
 from tqdm import tqdm
 
+
+logging.basicConfig(filename="/tmp/script_output.log", level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+
+# print(sys.argv)
+if len(sys.argv) < 2:
+    print("Error: Missing required arguments. Usage: script.py <file_url>")
+    sys.exit(1)
+
+
+file_url = sys.argv[1] 
+
+
 # === CONFIG ===
-UAV_IMAGE_DIR = "full_pipeline/uav_images"
-SEGFORMER_CONFIG_PATH = "trained_models/segformer/config.json"
-SEGFORMER_WEIGHTS_PATH = "trained_models/segformer/model.safetensors"
-CLASSIFIER_MODEL_PATH = "trained_models/convnext_classifier_base_with_coords.pth"
-OUTPUT_DIR = "full_pipeline/outputs"
+UAV_IMAGE_DIR = "eco-pipeline/uav_images"
+os.makedirs(UAV_IMAGE_DIR, exist_ok=True)
+
+try:
+    response = requests.get(file_url, stream=True)
+    response.raise_for_status()
+
+    filename = os.path.basename(file_url.split("?")[0])  # strip any query params
+    local_path = os.path.join(UAV_IMAGE_DIR, filename)
+
+    with open(local_path, "wb") as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            f.write(chunk)
+
+    logging.info(f"Downloaded image to: {local_path}")
+    print(f"Downloaded image to: {local_path}")
+
+except requests.exceptions.RequestException as e:
+    logging.error(f"Failed to download image: {e}")
+    print(f"Error: Failed to download image: {e}")
+    sys.exit(1)
+
+
+SEGFORMER_CONFIG_PATH = "eco-pipeline/trained_models/segformer/config.json"
+SEGFORMER_WEIGHTS_PATH = "eco-pipeline/trained_models/segformer/model.safetensors"
+CLASSIFIER_MODEL_PATH = "eco-pipeline/trained_models/convnext_classifier_base_with_coords.pth"
+OUTPUT_DIR = "eco-pipeline/outputs"
 PIXELS_PER_METER = 200
 PATCH_SIZE_METERS = 4
 PATCH_SIZE_PX = PIXELS_PER_METER * PATCH_SIZE_METERS

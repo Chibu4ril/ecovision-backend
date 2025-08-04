@@ -48,7 +48,7 @@ async def run_prediction(request: PredictionRequest):
     try:
         selected_file = request.selectedFileUrl
 
-        script_path = os.path.abspath("services/lgrModel.py")
+        script_path = os.path.abspath("eco-pipeline/main.py")
      
         process = subprocess.run(
             [sys.executable, script_path, selected_file],
