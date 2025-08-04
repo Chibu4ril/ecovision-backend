@@ -12,6 +12,9 @@ numpy
 scipy
 psycopg2
 opencv-python
+torch 
+torchvision
+torchaudio
 
 # pip install  -r requirements.txt
 # source venv/bin/activate
