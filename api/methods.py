@@ -27,7 +27,7 @@ async def fetch_files_from_bucket(bucket_name: str, folder_path: str = "") -> Li
         return []
 
 async def fetch_unprocessed_files() -> List[Dict[str, str]]:
-    return await fetch_files_from_bucket("uav-new-images", "unprocessed")
+    return await fetch_files_from_bucket("tryit", "unprocessed")
 
 async def fetch_training_sets() -> List[Dict[str, str]]:
     return await fetch_files_from_bucket("training_set")

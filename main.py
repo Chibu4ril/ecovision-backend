@@ -8,7 +8,7 @@ app = FastAPI(title="CSV Processor For EcoVision")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*", "https://ecovision-6kr2.onrender.com/*"],
+    allow_origins=["*", "https://ecovision-6kr2.onrender.com/*",],
     allow_credentials=True,
     allow_methods=["*"],  
     allow_headers=["*"],  
