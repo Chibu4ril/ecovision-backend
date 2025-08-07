@@ -10,6 +10,8 @@ from transformers import SegformerForSemanticSegmentation, SegformerImageProcess
 from safetensors.torch import load_file
 from tqdm import tqdm
 import logging
+import sys
+import requests
 
 
 logging.basicConfig(filename="/tmp/script_output.log", level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
