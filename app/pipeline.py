@@ -9,6 +9,7 @@ from torchvision.models import ConvNeXt_Base_Weights
 from transformers import SegformerForSemanticSegmentation, SegformerImageProcessor, SegformerConfig
 from safetensors.torch import load_file
 from tqdm import tqdm
+<<<<<<<< HEAD:eco-pipeline/main.py
 import logging
 import sys
 import requests
@@ -56,6 +57,15 @@ SEGFORMER_CONFIG_PATH = "eco-pipeline/trained_models/segformer/config.json"
 SEGFORMER_WEIGHTS_PATH = "eco-pipeline/trained_models/segformer/model.safetensors"
 CLASSIFIER_MODEL_PATH = "eco-pipeline/trained_models/convnext_classifier_base_with_coords.pth"
 OUTPUT_DIR = "eco-pipeline/outputs"
+========
+
+# === CONFIG ===
+UAV_IMAGE_DIR = "full_pipeline/uav_images"
+SEGFORMER_CONFIG_PATH = "trained_models/segformer/config.json"
+SEGFORMER_WEIGHTS_PATH = "trained_models/segformer/model.safetensors"
+CLASSIFIER_MODEL_PATH = "trained_models/convnext_classifier_base_with_coords.pth"
+OUTPUT_DIR = "full_pipeline/outputs"
+>>>>>>>> dev:app/pipeline.py
 PIXELS_PER_METER = 200
 PATCH_SIZE_METERS = 4
 PATCH_SIZE_PX = PIXELS_PER_METER * PATCH_SIZE_METERS
