@@ -1,49 +1,52 @@
 # ====================================================
-# 1️⃣ Base Image — CPU+GPU Compatible
+# Base Image — CUDA Runtime + Miniconda (Python 3.10)
 # ====================================================
-FROM python:3.10-slim
-
-# Optional: If building on GPU hosts, install NVIDIA runtime deps
-# (Safe for CPU too — won't be used if no GPU present)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    ffmpeg \
-    libsm6 \
-    libxext6 \
-    libgl1 \
-    && rm -rf /var/lib/apt/lists/*
+FROM nvidia/cuda:12.1.1-runtime-ubuntu22.04
 
 # ====================================================
-# 2️⃣ Workdir & Env Vars
+# Working Directory & ENV
 # ====================================================
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # ====================================================
-# 3️⃣ Install Torch (CPU or GPU at runtime)
-# We'll set up a script to choose the right wheel
+# Install System Dependencies
 # ====================================================
-COPY requirements.txt requirements.txt
-COPY trained_models/ /app/trained_models/
-
-
-# Install pip-tools for clean dependency management
-RUN pip install --no-cache-dir --upgrade pip
-
-# Install PyTorch CPU by default
-RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-
-# Install other deps
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y \
+    git curl wget build-essential libgl1 libglib2.0-0 \
+    ffmpeg libsm6 libxext6 \
+    && rm -rf /var/lib/apt/lists/*
 
 # ====================================================
-# 4️⃣ Copy App Code
+# Install Miniconda
+# ====================================================
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && \
+    bash miniconda.sh -b -p /opt/conda && \
+    rm miniconda.sh
+ENV PATH="/opt/conda/bin:$PATH"
+
+# ====================================================
+# Copy Conda Environment File & Install Dependencies
+# ====================================================
+COPY environment.yml .
+
+RUN conda env create -f environment.yml && conda clean -a
+
+# Activate conda environment by default in subsequent RUN commands and container
+SHELL ["conda", "run", "-n", "inference-env", "/bin/bash", "-c"]
+
+# ====================================================
+# Copy Application Code
 # ====================================================
 COPY . .
 
 # ====================================================
-# 5️⃣ Runtime Command
-# Use Uvicorn to start FastAPI
+# Expose FastAPI Port
 # ====================================================
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8000
+
+# ====================================================
+# Start FastAPI via Uvicorn inside Conda Env
+# ====================================================
+CMD ["conda", "run", "--no-capture-output", "-n", "inference-env", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
