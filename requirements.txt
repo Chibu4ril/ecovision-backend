@@ -1,0 +1,20 @@
+# Core
+fastapi
+uvicorn
+
+# ML
+torch==2.2.2
+torchvision
+torchaudio
+opencv-python
+numpy
+pillow
+scikit-learn
+matplotlib
+
+# Supabase
+supabase
+
+# Utils
+python-multipart
+requests
