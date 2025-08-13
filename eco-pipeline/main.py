@@ -24,9 +24,12 @@ if len(sys.argv) < 2:
 
 file_url = sys.argv[1] 
 
+print(f"Downloading file from URL: {file_url}")
+
 
 # === CONFIG ===
-UAV_IMAGE_DIR = "eco-pipeline/uav_images"
+# UAV_IMAGE_DIR = "eco-pipeline/uav_images"
+UAV_IMAGE_DIR = file_url.split("/")[-1].split("?")[0]  # Use the filename from the URL
 os.makedirs(UAV_IMAGE_DIR, exist_ok=True)
 
 try:
