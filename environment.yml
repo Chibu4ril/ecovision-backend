@@ -8,6 +8,7 @@ dependencies:
   - pip
   - numpy
   - pandas
+  - supabase
   - pillow
   - opencv
   - tqdm

@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import os
 from .models.models import load_segformer, load_classifier
-from .utils.helpers import segment_large_image, extract_blobs, transform_image, compute_patch_dominance, visualize_grid
+from .utils.helpers import segment_large_image, extract_blobs, compute_patch_dominance
 from torchvision import transforms
 import pandas as pd
 import cv2
