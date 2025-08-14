@@ -15,6 +15,7 @@ dependencies:
   - fastapi>=0.100
   - uvicorn[standard]>=0.23
   - requests
+  - supabase
   - pydantic>=2.0
   - python-dotenv
   - aiofiles
