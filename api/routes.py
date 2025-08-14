@@ -4,10 +4,12 @@ import tempfile
 import requests
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from .utils import download_image_from_supabase, delete_uploaded_files
+from .utils import delete_uploaded_files
 from fastapi.responses import JSONResponse
 
-from utils import run_inference, run_pipeline, fetch_unprocessed_files
+from .utils import fetch_unprocessed_files
+
+from app.pipeline import run_inference
 
 
 
@@ -64,7 +66,7 @@ async def run_prediction(request: PredictionRequest):
         if not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail="File not found.")
 
-        result = run_pipeline(file_path)
+        result = run_inference(file_path)
 
         return {
             "status": "success",
