@@ -1,52 +1,74 @@
 # ====================================================
-# Base Image — CUDA Runtime + Miniconda (Python 3.10)
+# Base Image
 # ====================================================
-FROM nvidia/cuda:12.1.1-runtime-ubuntu22.04
+FROM python:3.10-slim
 
-# ====================================================
-# Working Directory & ENV
-# ====================================================
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # ====================================================
-# Install System Dependencies
+# System dependencies
 # ====================================================
 RUN apt-get update && apt-get install -y \
-    git curl wget build-essential libgl1 libglib2.0-0 \
-    ffmpeg libsm6 libxext6 \
+    build-essential \
+    git \
+    curl \
+    wget \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
 # ====================================================
-# Install Miniconda
-# ====================================================
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && \
-    bash miniconda.sh -b -p /opt/conda && \
-    rm miniconda.sh
-ENV PATH="/opt/conda/bin:$PATH"
-
-# ====================================================
-# Copy Conda Environment File & Install Dependencies
+# Copy dependency files
 # ====================================================
 COPY environment.yml .
+COPY requirements.txt .
 
-RUN conda env create -f environment.yml && conda clean -a
+# ====================================================
+# Build argument for conditional install
+# ====================================================
+ARG RENDER=false
 
-# Activate conda environment by default in subsequent RUN commands and container
+# ====================================================
+# Conditional install
+# ====================================================
+RUN if [ "$RENDER" = "true" ]; then \
+        echo "Render build: Installing from requirements.txt" && \
+        pip install --no-cache-dir --upgrade pip && \
+        pip install --no-cache-dir -r requirements.txt ; \
+    else \
+        echo "Local build: Installing Miniconda & using environment.yml" && \
+        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && \
+        bash miniconda.sh -b -p /opt/conda && \
+        rm miniconda.sh && \
+        /opt/conda/bin/conda config --set always_yes yes && \
+        /opt/conda/bin/conda config --set changeps1 no && \
+        /opt/conda/bin/conda config --set channel_priority strict && \
+        /opt/conda/bin/conda config --set auto_activate_base false && \
+        # Accept TOS for channels explicitly \
+        /opt/conda/bin/conda tos accept --channel https://repo.anaconda.com/pkgs/main --override-channels || true && \
+        /opt/conda/bin/conda tos accept --channel https://repo.anaconda.com/pkgs/r --override-channels || true && \
+        /opt/conda/bin/conda env create -f environment.yml && \
+        echo "source activate inference-env" > ~/.bashrc ; \
+    fi
+
+# Make Conda environment available in subsequent RUN commands
 SHELL ["conda", "run", "-n", "inference-env", "/bin/bash", "-c"]
 
 # ====================================================
-# Copy Application Code
+# Copy application code
 # ====================================================
 COPY . .
 
 # ====================================================
-# Expose FastAPI Port
+# Expose FastAPI port
 # ====================================================
 EXPOSE 8000
 
 # ====================================================
-# Start FastAPI via Uvicorn inside Conda Env
+# Start FastAPI via Uvicorn
 # ====================================================
 CMD ["conda", "run", "--no-capture-output", "-n", "inference-env", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
