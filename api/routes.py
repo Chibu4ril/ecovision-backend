@@ -49,8 +49,9 @@ async def process_new_image(req: ImageDownloadRequest):
         # Download image
         local_path = download_image_from_url(req.image_url, final_dir)
         file_name = os.path.basename(local_path)
-
-        return {"status": "downloaded", "filename": file_name}
+        result = {"status": "downloaded", "filename": file_name}
+        print(result)
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
