@@ -1,7 +1,7 @@
 # === Core ML & Vision (hardware-agnostic) ===
 torch==2.5.1
 torchvision==0.21.0
-torchaudio==2.1.2
+torchaudio==2.6.0
 transformers>=4.30
 safetensors>=0.3
 opencv-python>=4.7
