@@ -26,3 +26,4 @@ pydantic>=1.10,<2.0
 
 # === File & Path Management ===
 aiofiles>=23.1
+requests
