@@ -1,18 +1,32 @@
-numpy<1.23
-pandas
-pillow
-opencv-python
-tqdm
-fastapi>=0.100
-uvicorn[standard]>=0.23
-requests
-supabase
-httpx[http2]
-pydantic>=2.0
-python-dotenv
-aiofiles
-torch==2.1.2
-torchvision==0.16.2
-torchaudio==2.1.2
+# --- Core ML & Vision ---
+torch>=2.0
+torchvision>=0.15
 transformers>=4.30
 safetensors>=0.3
+opencv-python>=4.7
+Pillow>=9.5
+numpy>=1.24
+pandas>=2.0
+torch==2.1.2+cpu
+torchvision==0.16.2+cpu
+torchaudio==2.1.2+cpu
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+
+# --- FastAPI Server ---
+fastapi>=0.100
+uvicorn[standard]>=0.23
+
+# --- HTTP Requests & Utils ---
+requests>=2.31
+tqdm>=4.66
+
+# --- Optional (If you're using Supabase SDK) ---
+supabase>=1.0.3  # Optional, if you're using Supabase Python SDK
+python-dotenv>=1.0  # Optional, for managing .env
+
+# --- Validation & Parsing ---
+pydantic>=2.0
+
+# --- File & Path Management ---
+aiofiles>=23.1  # If using FastAPI for file uploads or async file access

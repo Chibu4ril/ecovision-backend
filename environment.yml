@@ -17,7 +17,7 @@ dependencies:
   - requests
   - supabase
   - httpx[http2]
-  - pydantic>=2.0
+  - pydantic>=1.0
   - python-dotenv
   - aiofiles
   - pip:
