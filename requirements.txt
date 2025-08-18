@@ -1,7 +1,9 @@
-# === Core ML & Vision (hardware-agnostic) ===
-torch==2.5.1
-torchvision==0.21.0
-torchaudio==2.6.0
+# Core ML & Vision
+torch==2.1.2+cpu
+torchvision==0.16.2+cpu
+torchaudio==2.1.2+cpu
+-f https://download.pytorch.org/whl/torch_stable.html
+
 transformers>=4.30
 safetensors>=0.3
 opencv-python>=4.7
@@ -9,21 +11,52 @@ Pillow>=9.5
 numpy<2
 pandas>=2.0
 
-# === FastAPI Server ===
+# FastAPI Server
 fastapi
 uvicorn[standard]
 
-# === HTTP Requests & Utils ===
+# HTTP Requests & Utils
 requests>=2.31
 tqdm>=4.66
 
-# === Optional: Supabase SDK ===
+# Optional: Supabase SDK
 supabase>=1.0.3
 python-dotenv>=1.0
 
-# === Validation & Parsing ===
+# Validation & Parsing
 pydantic>=1.10,<2.0
 
-# === File & Path Management ===
+# File & Path Management
 aiofiles>=23.1
-requests
+ 
+
+
+# === Core ML & Vision (hardware-agnostic) ===
+# torch==2.5.1
+# torchvision==0.21.0
+# torchaudio==2.6.0
+# transformers>=4.30
+# safetensors>=0.3
+# opencv-python>=4.7
+# Pillow>=9.5
+# numpy<2
+# pandas>=2.0
+
+# # === FastAPI Server ===
+# fastapi
+# uvicorn[standard]
+
+# # === HTTP Requests & Utils ===
+# requests>=2.31
+# tqdm>=4.66
+
+# # === Optional: Supabase SDK ===
+# supabase>=1.0.3
+# python-dotenv>=1.0
+
+# # === Validation & Parsing ===
+# pydantic>=1.10,<2.0
+
+# # === File & Path Management ===
+# aiofiles>=23.1
+# requests
