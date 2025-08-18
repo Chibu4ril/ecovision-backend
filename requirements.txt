@@ -1,20 +1,29 @@
-# Core
+# === Core ML & Vision (hardware-agnostic) ===
+torch==2.1.2
+torchvision==0.16.2
+torchaudio==2.1.2
+transformers>=4.30
+safetensors>=0.3
+opencv-python>=4.7
+Pillow>=9.5
+numpy<2
+pandas>=2.0
+
+# === FastAPI Server ===
 fastapi
-uvicorn
+uvicorn[standard]
 
-# ML
-torch==2.2.2
-torchvision
-torchaudio
-opencv-python
-numpy
-pillow
-scikit-learn
-matplotlib
+# === HTTP Requests & Utils ===
+requests>=2.31
+tqdm>=4.66
 
-# Supabase
-supabase
+# === Optional: Supabase SDK ===
+supabase>=1.0.3
+python-dotenv>=1.0
 
-# Utils
-python-multipart
+# === Validation & Parsing ===
+pydantic>=1.10,<2.0
+
+# === File & Path Management ===
+aiofiles>=23.1
 requests
