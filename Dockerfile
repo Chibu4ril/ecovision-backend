@@ -6,6 +6,8 @@ FROM python:3.10-slim
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV PATH="/opt/conda/bin:$PATH"
+
 
 # ====================================================
 # System dependencies
@@ -69,6 +71,6 @@ COPY . .
 EXPOSE 8000
 
 # ====================================================
-# Start FastAPI via Uvicorn
+# Start FastAPI via Uvicorn (direct call, no conda run)
 # ====================================================
-CMD ["conda", "run", "--no-capture-output", "-n", "inference-env", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/opt/conda/envs/inference-env/bin/uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,7 +1,7 @@
 name: inference-env
 channels:
-  - defaults
   - conda-forge
+  - defaults
   - pytorch
 dependencies:
   - python=3.10
@@ -13,17 +13,22 @@ dependencies:
   - tqdm
   - ffmpeg
   - fastapi>=0.100
-  - uvicorn[standard]>=0.23
+  - uvicorn>=0.23
   - requests
-  - supabase
-  - httpx[http2]
+  - httpx
   - pydantic>=1.0
   - python-dotenv
   - aiofiles
   - pip:
-      # Install PyTorch with CUDA support, version compatible with CUDA 12.x (runtime in base image)
+      # PyTorch stack (CUDA runtime handled by base image)
       - torch==2.1.2
       - torchvision==0.16.2
       - torchaudio==2.1.2
+
+      # Hugging Face + safetensors
       - transformers>=4.30
       - safetensors>=0.3
+
+      # Supabase client (pip-only)
+      - supabase==2.3.5
+      - supafunc==0.4.4
