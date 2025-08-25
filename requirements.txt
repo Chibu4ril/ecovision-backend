@@ -1,6 +1,6 @@
 # === Core ML & Vision (hardware-agnostic) ===
-torch==2.7.1
-torchvision==0.22.1
+torch==2.1.2
+torchvision==0.16.2
 
 transformers>=4.30
 safetensors>=0.3
@@ -28,3 +28,4 @@ pydantic>=1.10,<2.0
 aiofiles>=23.1
 requests
 gdown
+
