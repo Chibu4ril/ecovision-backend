@@ -1,7 +1,7 @@
 from PIL import Image
 import torch
 import os
-from .models.models import load_segformer, load_classifier
+from .models.models import get_models, load_classifier
 from .utils.helpers import segment_large_image, extract_blobs, compute_patch_dominance, visualize_grid
 from torchvision import transforms
 import pandas as pd
@@ -20,12 +20,14 @@ PATCH_SIZE_PX = 800
 
 
 
-seg_model, seg_processor, DEVICE = load_segformer()
-classifier = load_classifier(device=DEVICE)
-last_conv_layer = classifier.features[-1]
+# seg_model, seg_processor, DEVICE = get_models()
+# classifier = load_classifier(device=DEVICE)
+# last_conv_layer = classifier.features[-1]
 
 
 def run_inference(image_input, image_name="input_image", user_id=None, supabase=None):
+    seg_model, seg_processor, DEVICE, classifier = get_models()
+    
     if not user_id:
         raise HTTPException(status_code=401, detail="Missing user_id")
     if supabase is None:

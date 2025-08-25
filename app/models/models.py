@@ -6,6 +6,12 @@ from safetensors.torch import load_file
 import gdown
 import os
 
+seg_model = None
+seg_processor = None
+DEVICE = None
+classifier = None
+
+
 # Google Drive file IDs
 SEGFORMER_CONFIG_ID = "1niivnfXj6z6ZiPjbE9zZXWoFs6ssTMaX"
 SEGFORMER_WEIGHTS_ID = "1yIw2tIjNTYX2vgSZa_9oim0jEu4H3yPg"
@@ -18,6 +24,15 @@ def download_if_missing(local_path, file_id):
         print(f"Downloading {local_path} from Google Drive...")
         gdown.download(url, local_path, quiet=False)
         print(f"Downloaded {local_path}")
+
+
+def get_models():
+    global seg_model, seg_processor, DEVICE, classifier
+    if seg_model is None or classifier is None:
+        DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        seg_model, seg_processor, DEVICE = load_segformer()
+        classifier = load_classifier(DEVICE)
+    return seg_model, seg_processor, DEVICE, classifier
 
 def load_segformer():
     config_path = "app/models/segformer/config.json"
