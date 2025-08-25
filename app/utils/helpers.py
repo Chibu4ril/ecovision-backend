@@ -44,6 +44,28 @@ def compute_patch_dominance(mask, patch_size):
                 "x": x // patch_size,
                 "y": y // patch_size,
                 "dominant": {0: "background", 1: "spartina", 2: "puccinellia"}[dominant_idx],
-                "percent": percents[dominant_idx]
+                "percent": percents[dominant_idx],
+                "total_blobs": sum(counts[1:])
             })
     return results
+
+def visualize_grid(pil_img, dominance_data, patch_size, save_path=None):
+    img = np.array(pil_img)
+    vis = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+    for d in dominance_data:
+        x = d["x"] * patch_size
+        y = d["y"] * patch_size
+        label = d["dominant"]
+        perc = d["percent"]
+        color = (0, 255, 0) if label == "spartina" else (255, 0, 0)
+        cv2.rectangle(vis, (x, y), (x + patch_size, y + patch_size), color, 2)
+        cv2.putText(vis, f"{label}: {perc}%", (x + 5, y + 20),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+
+    if save_path:
+        cv2.imwrite(save_path, vis)
+        return None
+    else:
+        vis_rgb = cv2.cvtColor(vis, cv2.COLOR_BGR2RGB)
+        return Image.fromarray(vis_rgb)

@@ -1,20 +1,33 @@
 import logging
 import os
-import tempfile
+import numpy as np
 import requests
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel
 from .utils import delete_uploaded_files
 from fastapi.responses import JSONResponse
+from typing import Optional
+from config.config import supabase
+
+
 
 from .utils import fetch_unprocessed_files
 
 from app.pipeline import run_inference
+  # not anon key
 
 
 
 router = APIRouter()
 
+def to_python_type(val):
+    if isinstance(val, (np.integer, np.int64)):
+        return int(val)
+    if isinstance(val, (np.floating, np.float64)):
+        return float(val)
+    if isinstance(val, np.ndarray):
+        return val.tolist()
+    return val
 
 def download_image_from_url(url, save_dir="temp"):
     os.makedirs(save_dir, exist_ok=True)
@@ -57,21 +70,35 @@ async def process_new_image(req: ImageDownloadRequest):
 
 class PredictionRequest(BaseModel):
     filename: str
+    
 
 @router.post("/runModels")
-async def run_prediction(request: PredictionRequest):
+async def run_prediction(request: PredictionRequest, authorization: str = Header(None) ):
     try:
         local_folder = "./cached_inputs"
         file_path = os.path.join(local_folder, request.filename)
 
         if not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail="File not found.")
+        
+        if not authorization:
+            raise HTTPException(status_code=401, detail="Missing auth header")
 
-        result = run_inference(file_path)
+        token = authorization.split(" ")[1]
+        user_resp = supabase.auth.get_user(token)
+        if not user_resp or not getattr(user_resp, "user", None):
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        user_id = user_resp.user.id
+
+
+        result = run_inference(file_path, request.filename, user_id=user_id, supabase=supabase )
+
+        cleaned_result = {k: to_python_type(v) for k, v in result.items()}
 
         return {
             "status": "success",
-            "data": result
+            "data": cleaned_result
         }
 
     except Exception as e:
