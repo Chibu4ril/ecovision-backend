@@ -8,7 +8,7 @@ import os
 
 # Google Drive file IDs
 SEGFORMER_CONFIG_ID = "1niivnfXj6z6ZiPjbE9zZXWoFs6ssTMaX"
-SEGFORMER_WEIGHTS_ID = "Y1yIw2tIjNTYX2vgSZa_9oim0jEu4H3yPg"
+SEGFORMER_WEIGHTS_ID = "1yIw2tIjNTYX2vgSZa_9oim0jEu4H3yPg"
 CONVNEXT_MODEL_ID = "1E4QcGrJIPmcSs3ts0qhqtNKngIlVxSrP"
 
 def download_if_missing(local_path, file_id):
